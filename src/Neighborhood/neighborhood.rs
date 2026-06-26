@@ -1,200 +1,67 @@
 //! ============================================================================
-//! vecinos_triangular.rs
+//! neighborhood.rs
 //!
-//! Vecindades para el retículo triangular.
+//! Define la interfaz común para todas las vecindades del simulador.
 //!
-//! Traducción directa de la implementación en Python.
+//! Una vecindad determina únicamente qué celdas son consideradas vecinas.
 //!
-//! VecinosT1 : triángulos que comparten lado.
-//! VecinosT2 : triángulos opuestos.
-//! VecinosT3 : triángulos que comparten vértice (6 vecinos).
-//! VecinosT4 : triángulos que comparten vértice (12 vecinos).
+//! Es completamente independiente de:
+//!
+//! - la geometría
+//! - el mundo
+//! - la simulación
 //!
 //! ============================================================================
 
-use super::neighborhood::{
-    filter_neighbors,
-    CellIndex,
-    Neighborhood,
-};
+/// Índice de una celda dentro del mundo.
+///
+/// (fila, columna)
+pub type CellIndex = (usize, usize);
 
-////////////////////////////////////////////////////////////////////////////////
-// VecinosT1
-////////////////////////////////////////////////////////////////////////////////
+/// Interfaz común para todas las vecindades.
+///
+/// La notación utilizada sigue la convención matemática:
+///
+/// - `i` : índice de fila.
+/// - `j` : índice de columna.
+/// - `L` : número de filas.
+/// - `C` : número de columnas.
+pub trait Neighborhood: Send + Sync {
+    /// Nombre de la vecindad.
+    fn name(&self) -> &'static str;
 
-#[derive(Debug, Clone, Copy, Default)]
-pub struct VecinosT1;
-
-impl Neighborhood for VecinosT1 {
-
-    fn name(&self) -> &'static str {
-        "VecinosT1"
-    }
-
-    fn neighbors(
-        &self,
-        i: usize,
-        j: usize,
+    /// Elimina las coordenadas que se encuentran fuera del dominio.
+    pub fn filter_neighbors(
+        candidates: &[(isize, isize)],
         L: usize,
         C: usize,
     ) -> Vec<CellIndex> {
-
-        let mut vecinos = vec![
-            (i as isize, j as isize - 1),
-            (i as isize, j as isize + 1),
-        ];
-
-        if (i as isize - j as isize) % 2 == 0 {
-            vecinos.push((i as isize + 1, j as isize));
-        } else {
-            vecinos.push((i as isize - 1, j as isize));
+    
+        let mut neighbors = Vec::new();
+    
+        for &(i, j) in candidates {
+    
+            if i >= 0
+                && i < L as isize
+                && j >= 0
+                && j < C as isize
+            {
+                neighbors.push((i as usize, j as usize));
+            }
+    
         }
-
-        filter_neighbors(&vecinos, L, C)
-
+    
+        neighbors
     }
+    /// Devuelve los vecinos de la celda `(i,j)`.
+    ///
+    /// Los vecinos siempre pertenecen al dominio
+    ///
+    /// ```text
+    /// 0 <= i < L
+    /// 0 <= j < C
+    /// ```
 
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// VecinosT2
-////////////////////////////////////////////////////////////////////////////////
-
-#[derive(Debug, Clone, Copy, Default)]
-pub struct VecinosT2;
-
-impl Neighborhood for VecinosT2 {
-
-    fn name(&self) -> &'static str {
-        "VecinosT2"
-    }
-
-    fn neighbors(
-        &self,
-        i: usize,
-        j: usize,
-        L: usize,
-        C: usize,
-    ) -> Vec<CellIndex> {
-
-        let vecinos = if (i as isize - j as isize) % 2 == 0 {
-
-            [
-                (i as isize - 1, j as isize),
-                (i as isize + 1, j as isize - 2),
-                (i as isize + 1, j as isize + 2),
-            ]
-
-        } else {
-
-            [
-                (i as isize + 1, j as isize),
-                (i as isize - 1, j as isize - 2),
-                (i as isize - 1, j as isize + 2),
-            ]
-
-        };
-
-        filter_neighbors(&vecinos, L, C)
-
-    }
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// VecinosT3
-////////////////////////////////////////////////////////////////////////////////
-
-#[derive(Debug, Clone, Copy, Default)]
-pub struct VecinosT3;
-
-impl Neighborhood for VecinosT3 {
-
-    fn name(&self) -> &'static str {
-        "VecinosT3"
-    }
-
-    fn neighbors(
-        &self,
-        i: usize,
-        j: usize,
-        L: usize,
-        C: usize,
-    ) -> Vec<CellIndex> {
-
-        let vecinos = [
-
-            (i as isize - 1, j as isize - 1),
-            (i as isize - 1, j as isize + 1),
-
-            (i as isize, j as isize - 2),
-            (i as isize, j as isize + 2),
-
-            (i as isize + 1, j as isize - 1),
-            (i as isize + 1, j as isize + 1),
-
-        ];
-
-        filter_neighbors(&vecinos, L, C)
-
-    }
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// VecinosT4
-////////////////////////////////////////////////////////////////////////////////
-
-#[derive(Debug, Clone, Copy, Default)]
-pub struct VecinosT4;
-
-impl Neighborhood for VecinosT4 {
-
-    fn name(&self) -> &'static str {
-        "VecinosT4"
-    }
-
-    fn neighbors(
-        &self,
-        i: usize,
-        j: usize,
-        L: usize,
-        C: usize,
-    ) -> Vec<CellIndex> {
-
-        let mut vecinos = vec![
-
-            (i as isize - 1, j as isize - 1),
-            (i as isize - 1, j as isize + 1),
-
-            (i as isize, j as isize - 2),
-            (i as isize, j as isize + 2),
-
-            (i as isize + 1, j as isize - 1),
-            (i as isize + 1, j as isize + 1),
-
-            (i as isize, j as isize - 1),
-            (i as isize, j as isize + 1),
-
-            (i as isize - 1, j as isize),
-            (i as isize + 1, j as isize),
-
-        ];
-
-        if (i as isize - j as isize) % 2 == 0 {
-
-            vecinos.push((i as isize + 1, j as isize - 2));
-            vecinos.push((i as isize + 1, j as isize + 2));
-
-        } else {
-
-            vecinos.push((i as isize - 1, j as isize - 2));
-            vecinos.push((i as isize - 1, j as isize + 2));
-
-        }
-
-        filter_neighbors(&vecinos, L, C)
-
-    }
-
+    
+    fn neighbors(&self, i: usize, j: usize, L: usize, C: usize) -> Vec<CellIndex>;
 }

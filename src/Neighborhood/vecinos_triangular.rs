@@ -5,33 +5,14 @@
 //!
 //! Traducción directa de la implementación en Python.
 //!
+//! VecinosT1 : triángulos que comparten lado.
+//! VecinosT2 : triángulos opuestos.
+//! VecinosT3 : triángulos que comparten vértice (6 vecinos).
+//! VecinosT4 : triángulos que comparten vértice (12 vecinos).
+//!
 //! ============================================================================
 
-use super::neighborhood::{CellIndex, Neighborhood};
-
-/// Filtra los vecinos que se encuentran fuera del mundo.
-fn filter_neighbors(
-    candidates: &[(isize, isize)],
-    rows: usize,
-    cols: usize,
-) -> Vec<CellIndex> {
-
-    let mut neighbors = Vec::new();
-
-    for &(r, c) in candidates {
-
-        if r >= 0
-            && r < rows as isize
-            && c >= 0
-            && c < cols as isize
-        {
-            neighbors.push((r as usize, c as usize));
-        }
-
-    }
-
-    neighbors
-}
+use super::neighborhood::{CellIndex, Neighborhood, filter_neighbors};
 
 ////////////////////////////////////////////////////////////////////////////////
 // VecinosT1
@@ -41,31 +22,20 @@ fn filter_neighbors(
 pub struct VecinosT1;
 
 impl Neighborhood for VecinosT1 {
-
     fn name(&self) -> &'static str {
         "VecinosT1"
     }
 
-    fn neighbors(
-        &self,
-        row: usize,
-        col: usize,
-        rows: usize,
-        cols: usize,
-    ) -> Vec<CellIndex> {
+    fn neighbors(&self, i: usize, j: usize, L: usize, C: usize) -> Vec<CellIndex> {
+        let mut vecinos = vec![(i as isize, j as isize - 1), (i as isize, j as isize + 1)];
 
-        let mut vecinos = vec![
-            (row as isize, col as isize - 1),
-            (row as isize, col as isize + 1),
-        ];
-
-        if (row + col) % 2 == 0 {
-            vecinos.push((row as isize + 1, col as isize));
+        if (i as isize - j as isize) % 2 == 0 {
+            vecinos.push((i as isize + 1, j as isize));
         } else {
-            vecinos.push((row as isize - 1, col as isize));
+            vecinos.push((i as isize - 1, j as isize));
         }
 
-        filter_neighbors(&vecinos, rows, cols)
+        filter_neighbors(&vecinos, L, C)
     }
 }
 
@@ -77,41 +47,27 @@ impl Neighborhood for VecinosT1 {
 pub struct VecinosT2;
 
 impl Neighborhood for VecinosT2 {
-
     fn name(&self) -> &'static str {
         "VecinosT2"
     }
 
-    fn neighbors(
-        &self,
-        row: usize,
-        col: usize,
-        rows: usize,
-        cols: usize,
-    ) -> Vec<CellIndex> {
-
-        let vecinos = if (row + col) % 2 == 0 {
-
+    fn neighbors(&self, i: usize, j: usize, L: usize, C: usize) -> Vec<CellIndex> {
+        let vecinos = if (i as isize - j as isize) % 2 == 0 {
             [
-                (row as isize - 1, col as isize),
-                (row as isize + 1, col as isize - 2),
-                (row as isize + 1, col as isize + 2),
+                (i as isize - 1, j as isize),
+                (i as isize + 1, j as isize - 2),
+                (i as isize + 1, j as isize + 2),
             ]
-
         } else {
-
             [
-                (row as isize + 1, col as isize),
-                (row as isize - 1, col as isize - 2),
-                (row as isize - 1, col as isize + 2),
+                (i as isize + 1, j as isize),
+                (i as isize - 1, j as isize - 2),
+                (i as isize - 1, j as isize + 2),
             ]
-
         };
 
-        filter_neighbors(&vecinos, rows, cols)
-
+        filter_neighbors(&vecinos, L, C)
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,36 +78,22 @@ impl Neighborhood for VecinosT2 {
 pub struct VecinosT3;
 
 impl Neighborhood for VecinosT3 {
-
     fn name(&self) -> &'static str {
         "VecinosT3"
     }
 
-    fn neighbors(
-        &self,
-        row: usize,
-        col: usize,
-        rows: usize,
-        cols: usize,
-    ) -> Vec<CellIndex> {
-
+    fn neighbors(&self, i: usize, j: usize, L: usize, C: usize) -> Vec<CellIndex> {
         let vecinos = [
-
-            (row as isize - 1, col as isize - 1),
-            (row as isize - 1, col as isize + 1),
-
-            (row as isize, col as isize - 2),
-            (row as isize, col as isize + 2),
-
-            (row as isize + 1, col as isize - 1),
-            (row as isize + 1, col as isize + 1),
-
+            (i as isize - 1, j as isize - 1),
+            (i as isize - 1, j as isize + 1),
+            (i as isize, j as isize - 2),
+            (i as isize, j as isize + 2),
+            (i as isize + 1, j as isize - 1),
+            (i as isize + 1, j as isize + 1),
         ];
 
-        filter_neighbors(&vecinos, rows, cols)
-
+        filter_neighbors(&vecinos, L, C)
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -162,52 +104,32 @@ impl Neighborhood for VecinosT3 {
 pub struct VecinosT4;
 
 impl Neighborhood for VecinosT4 {
-
     fn name(&self) -> &'static str {
         "VecinosT4"
     }
 
-    fn neighbors(
-        &self,
-        row: usize,
-        col: usize,
-        rows: usize,
-        cols: usize,
-    ) -> Vec<CellIndex> {
-
+    fn neighbors(&self, i: usize, j: usize, L: usize, C: usize) -> Vec<CellIndex> {
         let mut vecinos = vec![
-
-            (row as isize - 1, col as isize - 1),
-            (row as isize - 1, col as isize + 1),
-
-            (row as isize, col as isize - 2),
-            (row as isize, col as isize + 2),
-
-            (row as isize + 1, col as isize - 1),
-            (row as isize + 1, col as isize + 1),
-
-            (row as isize, col as isize - 1),
-            (row as isize, col as isize + 1),
-
-            (row as isize - 1, col as isize),
-            (row as isize + 1, col as isize),
-
+            (i as isize - 1, j as isize - 1),
+            (i as isize - 1, j as isize + 1),
+            (i as isize, j as isize - 2),
+            (i as isize, j as isize + 2),
+            (i as isize + 1, j as isize - 1),
+            (i as isize + 1, j as isize + 1),
+            (i as isize, j as isize - 1),
+            (i as isize, j as isize + 1),
+            (i as isize - 1, j as isize),
+            (i as isize + 1, j as isize),
         ];
 
-        if (row + col) % 2 == 0 {
-
-            vecinos.push((row as isize + 1, col as isize - 2));
-            vecinos.push((row as isize + 1, col as isize + 2));
-
+        if (i as isize - j as isize) % 2 == 0 {
+            vecinos.push((i as isize + 1, j as isize - 2));
+            vecinos.push((i as isize + 1, j as isize + 2));
         } else {
-
-            vecinos.push((row as isize - 1, col as isize - 2));
-            vecinos.push((row as isize - 1, col as isize + 2));
-
+            vecinos.push((i as isize - 1, j as isize - 2));
+            vecinos.push((i as isize - 1, j as isize + 2));
         }
 
-        filter_neighbors(&vecinos, rows, cols)
-
+        filter_neighbors(&vecinos, L, C)
     }
-
 }

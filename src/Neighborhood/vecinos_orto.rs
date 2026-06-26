@@ -8,29 +8,6 @@
 use super::neighborhood::{CellIndex, Neighborhood};
 
 /// Filtra las coordenadas fuera del dominio.
-fn filter_neighbors(
-    candidates: &[(isize, isize)],
-    L: usize,
-    C: usize,
-) -> Vec<CellIndex> {
-
-    let mut neighbors = Vec::new();
-
-    for &(i, j) in candidates {
-
-        if i >= 0
-            && i < L as isize
-            && j >= 0
-            && j < C as isize
-        {
-            neighbors.push((i as usize, j as usize));
-        }
-
-    }
-
-    neighbors
-
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Moore (8 vecinos)
@@ -40,38 +17,24 @@ fn filter_neighbors(
 pub struct VecinosMoore;
 
 impl Neighborhood for VecinosMoore {
-
     fn name(&self) -> &'static str {
         "VecinosMoore"
     }
 
-    fn neighbors(
-        &self,
-        i: usize,
-        j: usize,
-        L: usize,
-        C: usize,
-    ) -> Vec<CellIndex> {
-
+    fn neighbors(&self, i: usize, j: usize, L: usize, C: usize) -> Vec<CellIndex> {
         let candidatos = [
-
-            (i as isize-1, j as isize-1),
-            (i as isize-1, j as isize),
-            (i as isize-1, j as isize+1),
-
-            (i as isize,   j as isize-1),
-            (i as isize,   j as isize+1),
-
-            (i as isize+1, j as isize-1),
-            (i as isize+1, j as isize),
-            (i as isize+1, j as isize+1),
-
+            (i as isize - 1, j as isize - 1),
+            (i as isize - 1, j as isize),
+            (i as isize - 1, j as isize + 1),
+            (i as isize, j as isize - 1),
+            (i as isize, j as isize + 1),
+            (i as isize + 1, j as isize - 1),
+            (i as isize + 1, j as isize),
+            (i as isize + 1, j as isize + 1),
         ];
 
         filter_neighbors(&candidatos, L, C)
-
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,32 +45,20 @@ impl Neighborhood for VecinosMoore {
 pub struct VecinosVonNeumann;
 
 impl Neighborhood for VecinosVonNeumann {
-
     fn name(&self) -> &'static str {
         "VecinosVonNeumann"
     }
 
-    fn neighbors(
-        &self,
-        i: usize,
-        j: usize,
-        L: usize,
-        C: usize,
-    ) -> Vec<CellIndex> {
-
+    fn neighbors(&self, i: usize, j: usize, L: usize, C: usize) -> Vec<CellIndex> {
         let candidatos = [
-
-            (i as isize-1, j as isize),
-            (i as isize+1, j as isize),
-            (i as isize,   j as isize-1),
-            (i as isize,   j as isize+1),
-
+            (i as isize - 1, j as isize),
+            (i as isize + 1, j as isize),
+            (i as isize, j as isize - 1),
+            (i as isize, j as isize + 1),
         ];
 
         filter_neighbors(&candidatos, L, C)
-
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,30 +69,18 @@ impl Neighborhood for VecinosVonNeumann {
 pub struct VecinosDiagonal;
 
 impl Neighborhood for VecinosDiagonal {
-
     fn name(&self) -> &'static str {
         "VecinosDiagonal"
     }
 
-    fn neighbors(
-        &self,
-        i: usize,
-        j: usize,
-        L: usize,
-        C: usize,
-    ) -> Vec<CellIndex> {
-
+    fn neighbors(&self, i: usize, j: usize, L: usize, C: usize) -> Vec<CellIndex> {
         let candidatos = [
-
-            (i as isize-1, j as isize-1),
-            (i as isize-1, j as isize+1),
-            (i as isize+1, j as isize-1),
-            (i as isize+1, j as isize+1),
-
+            (i as isize - 1, j as isize - 1),
+            (i as isize - 1, j as isize + 1),
+            (i as isize + 1, j as isize - 1),
+            (i as isize + 1, j as isize + 1),
         ];
 
         filter_neighbors(&candidatos, L, C)
-
     }
-
 }
