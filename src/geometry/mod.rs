@@ -1,40 +1,46 @@
 //! ============================================================================
 //! geometry
 //!
-//! Módulo encargado de la representación geométrica de los retículos.
+//! Geometrías utilizadas para representar el mundo.
 //!
 //! Este módulo es completamente independiente de:
 //!
 //! - World
-//! - Topology
+//! - Neighborhood
 //! - Simulation
 //!
-//! Únicamente describe cómo representar gráficamente una celda.
+//! Únicamente describe cómo dibujar cada celda.
 //!
 //! ============================================================================
 
+//---------------------------------------------------------------------
+// Módulos
+//---------------------------------------------------------------------
+
 pub mod shape;
+
 pub mod polygon;
+
 pub mod genpolygon;
+
 pub mod transform;
-pub mod geometry;
+
 pub mod cell_geometry;
+
+pub mod geometry;
 
 //---------------------------------------------------------------------
 // Reexportaciones
 //---------------------------------------------------------------------
-pub use cell_geometry::CellGeometry;
-
-pub use geometry::{
-    CellGeometry,
-    CellIndex,
-    Geometry,
-};
-
-pub use genpolygon::GenPolygon;
-
-pub use polygon::Polygon;
 
 pub use shape::Shape;
 
+pub use polygon::Polygon;
+
+pub use genpolygon::GenPolygon;
+
 pub use transform::Transform;
+
+pub use cell_geometry::CellGeometry;
+
+pub use geometry::{CellIndex, Geometry};

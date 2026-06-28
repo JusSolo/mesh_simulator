@@ -104,15 +104,15 @@ impl Transform {
         &self,
         source: &[Vec2],
         destination: &mut Vec<Pos2>,
-    ) -> Vec<Pos2> {
+    ) {
         destination.clear();
     
-        for v in source {
-    
+        for &v in source {
+        
             destination.push(
-                self.transform_point(*v)
+                self.transform_point(v)
             );
-    
+        
         }
     }
 }

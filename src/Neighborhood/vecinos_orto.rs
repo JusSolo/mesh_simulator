@@ -6,6 +6,7 @@
 //! ============================================================================
 
 use super::neighborhood::{CellIndex, Neighborhood};
+use super::neighborhood::filter_neighbors;
 
 /// Filtra las coordenadas fuera del dominio.
 

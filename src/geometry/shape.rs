@@ -26,7 +26,6 @@ use eframe::egui::Vec2;
 /// Normalmente el radio circunscrito será igual a 1.0.
 pub trait Shape: Send + Sync {
     /// Nombre de la figura.
-    fn name(&self) -> &str;
 
     /// Número de vértices.
     fn sides(&self) -> usize;

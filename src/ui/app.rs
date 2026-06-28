@@ -9,9 +9,12 @@
 //! ============================================================================
 
 use super::{layout, theme};
-use eframe::{App, Frame, xegui};
+use eframe::{
+    egui,
+    App,
+    Frame,
+};
 
-use super::layout;
 
 /// Aplicación principal.
 pub struct AutomataLab {

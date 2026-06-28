@@ -7,9 +7,17 @@
 //!
 //! ============================================================================
 
-use eframe::egui::{Align2, Color32, FontId, Sense, Stroke, Ui};
-
+use eframe::egui::{
+    Align2,
+    Color32,
+    FontId,
+    Sense,
+    Stroke,
+    StrokeKind,
+    Ui,
+};
 use super::app::AutomataLab;
+
 
 /// Dibuja el viewport principal.
 pub fn show(ui: &mut Ui, _app: &mut AutomataLab) {
@@ -31,7 +39,16 @@ pub fn show(ui: &mut Ui, _app: &mut AutomataLab) {
     // Marco
     //----------------------------------------------------------------------
 
-    painter.rect_stroke(response.rect, 0.0, Stroke::new(1.0, Color32::DARK_GRAY));
+    painter.rect_stroke(
+        response.rect,
+        0.0,
+        Stroke::new(
+            1.0,
+            Color32::DARK_GRAY,
+        ),
+        StrokeKind::Middle,
+    );
+    
 
     //----------------------------------------------------------------------
     // Texto temporal
